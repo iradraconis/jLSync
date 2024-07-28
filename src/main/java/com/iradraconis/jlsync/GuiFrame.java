@@ -693,11 +693,11 @@ import javax.swing.SwingUtilities;
 
 public class GuiFrame extends javax.swing.JFrame {
 
-    private String syncFolder = System.getProperty("user.home") + "/Akten";
-    private String principal_id = "";
-    private String server = "";
-    private String password = "";
-    private String port = "";
+    private String syncFolder = System.getProperty("user.home") + "/jLSync/Akten";
+    private String principal_id;
+    private String server;
+    private String password;
+    private String port;
     
     /**
      * Creates new form guiframe
@@ -732,6 +732,7 @@ public class GuiFrame extends javax.swing.JFrame {
         jMenuItemLoginSpeichern = new javax.swing.JMenuItem();
         jMenuItemAktenLadenAktualisieren = new javax.swing.JMenuItem();
         jMenuItemChooseSyncFolder = new javax.swing.JMenuItem();
+        jMenuItemShowSettings = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemBeenden = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -806,6 +807,14 @@ public class GuiFrame extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItemChooseSyncFolder);
+
+        jMenuItemShowSettings.setText("Einstellungen zeigen");
+        jMenuItemShowSettings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemShowSettingsActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemShowSettings);
         jMenu1.add(jSeparator1);
 
         jMenuItemBeenden.setText("j-Lawyer Sync beenden");
@@ -976,10 +985,34 @@ public class GuiFrame extends javax.swing.JFrame {
                     jsonObject = gson.fromJson(reader, JsonObject.class);
                     // System.out.println("Current JSON content: " + jsonObject.toString());
                     // load the login data
-                    tfUser.setText(jsonObject.get("user").getAsString());
-                    tfPassword.setText(jsonObject.get("password").getAsString());
-                    tfServer.setText(jsonObject.get("server").getAsString());
-                    tfPort.setText(jsonObject.get("port").getAsString());
+                    //check if value of user is set, if not set to empty string
+                    if (!jsonObject.has("user")) {
+                        jsonObject.addProperty("user", "");
+                    } else {    
+                        tfUser.setText(jsonObject.get("user").getAsString());
+                    }
+
+                    //check if value of password is set, if not set to empty string
+                    if (!jsonObject.has("password")) {
+                        jsonObject.addProperty("password", "");
+                    } else {
+                        tfPassword.setText(jsonObject.get("password").getAsString());
+                    }
+
+                    //check if value of server is set, if not set to empty string
+                    if (!jsonObject.has("server")) {
+                        jsonObject.addProperty("server", "");
+                    } else {
+                        tfServer.setText(jsonObject.get("server").getAsString());
+                    }
+
+                    //check if value of port is set, if not set to empty string
+                    if (!jsonObject.has("port")) {
+                        jsonObject.addProperty("port", "");
+                    } else {
+                        tfPort.setText(jsonObject.get("port").getAsString());
+                    }
+
                     // check if the sync folder is set
                     if (jsonObject.has("syncFolder")) {
                         syncFolder = jsonObject.get("syncFolder").getAsString();
@@ -1165,7 +1198,7 @@ public class GuiFrame extends javax.swing.JFrame {
         }
     }
     
-    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {      
         new Thread(() -> {
             // prüfe ob jL_Sync_Files_Cases.json existiert
             Path jsonFilePath = Paths.get(".jL_Sync_Files_data/jL_Sync_Files_Cases.json");
@@ -1176,7 +1209,7 @@ public class GuiFrame extends javax.swing.JFrame {
                 int dialogResult = JOptionPane.showConfirmDialog(null, status + "\nAktenbestand jetzt abgleichen?", "Fehler", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
 
-                    LoadCases.listCases();
+                    LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), tfPassword.getText());
                     String temp_status2 = "Aktenbestand mit Server abgeglichen, es kann synchronisiert werden.";
                     lbStatus.setText(temp_status2);
                 }
@@ -1184,41 +1217,38 @@ public class GuiFrame extends javax.swing.JFrame {
                 return;
             }
             
-            try {
-                principal_id = tfUser.getText();
-                if (principal_id.isEmpty()) {
-                    final String status = "Fehler: Kein User Login vorhanden!";
-                    SwingUtilities.invokeLater(() -> lbStatus.setText(status));
-                    return;
-                }
-                server = tfServer.getText();
-                if (server.isEmpty()) {
-                    final String status = "Fehler: Kein Server Login vorhanden!";
-                    SwingUtilities.invokeLater(() -> lbStatus.setText(status));
-                    return;
-                }
-                port = tfPort.getText();
-                if (port.isEmpty()) {
-                    final String status = "Fehler: Kein Port Login vorhanden!";
-                    SwingUtilities.invokeLater(() -> lbStatus.setText(status));
-                    return;
-                }
-                password = tfPassword.getPassword().toString();
-                if (password.isEmpty()) {
-                    final String status = "Fehler: Kein Passwort Login vorhanden!";
-                    SwingUtilities.invokeLater(() -> lbStatus.setText(status));
-                    return;
-                }
-            } catch (Exception e) {
-                final String status = "Fehler: Login Daten prüfen";
+            
+            principal_id = tfUser.getText();
+            if (principal_id.isEmpty()) {
+                final String status = "Fehler: Kein User Login vorhanden!";
                 SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+                return;
             }
-             
+            server = tfServer.getText();
+            if (server.isEmpty()) {
+                final String status = "Fehler: Kein Server Login vorhanden!";
+                SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+                return;
+            }
+            port = tfPort.getText();
+            if (port.isEmpty()) {
+                final String status = "Fehler: Kein Port Login vorhanden!";
+                SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+                return;
+            }
+            password = new String(tfPassword.getPassword());
+            if (password.isEmpty()) {
+                final String status = "Fehler: Kein Passwort Login vorhanden!";
+                SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+                return;
+                }
+          
             List<LoadCases.CaseInfo> casesLoadedToSync = new ArrayList<>();
             Map<String, List<LoadCases.Document>> documentsMap = new HashMap<>();
             
-            LoadCases.listCasesToSync(principal_id, casesLoadedToSync);
             
+            LoadCases.listCasesToSync(principal_id, casesLoadedToSync, tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
+
             int totalCases = casesLoadedToSync.size();
             int casesProcessed = 0;
             int totalDocuments = 0;
@@ -1230,7 +1260,7 @@ public class GuiFrame extends javax.swing.JFrame {
             // Zählen der Gesamtdokumente
             try {
                 for (LoadCases.CaseInfo caseInfo : casesLoadedToSync) {
-                    LoadCases.dateiListeEmpfangen(caseInfo.getCaseId(), documentsMap);
+                    LoadCases.dateiListeEmpfangen(caseInfo.getCaseId(), documentsMap, server, port, principal_id, password);
                     List<LoadCases.Document> documents = documentsMap.get(caseInfo.getCaseId());
                     if (documents != null) {
                         totalDocuments += documents.size();
@@ -1258,7 +1288,7 @@ public class GuiFrame extends javax.swing.JFrame {
                         String documentId = document.getId();
                         String documentName = document.getName();
                         
-                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName);
+                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principal_id, password);
 
                         // Aktualisieren des Dokumentenfortschritts
                         documentsProcessed++;
@@ -1296,7 +1326,7 @@ public class GuiFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemLoginSpeichernActionPerformed
 
     private void jMenuItemAktenLadenAktualisierenActionPerformed(java.awt.event.ActionEvent evt) {                                                                 
-        LoadCases.listCases();
+        LoadCases.listCases(server, port, principal_id, password);
         final String status = String.format("Aktenbestand mit Server abgeglichen, es kann synchronisiert werden."); 
         SwingUtilities.invokeLater(() -> lbStatus.setText(status));
     }
@@ -1403,6 +1433,26 @@ public class GuiFrame extends javax.swing.JFrame {
         saveFileTypeSettings();
     }//GEN-LAST:event_jCheckBoxMenuItem7ActionPerformed
 
+    private void jMenuItemShowSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemShowSettingsActionPerformed
+        // show joptionpane the settings file
+        String directoryPath = ".jL_Sync_Files_data";
+        String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
+        Path jsonFilePath = Paths.get(filePath);
+
+        try {
+            if (Files.exists(jsonFilePath)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                try (FileReader reader = new FileReader(filePath)) {
+                    JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+                    JOptionPane.showMessageDialog(null, jsonObject.toString(), "Einstellungen", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_jMenuItemShowSettingsActionPerformed
+
     private void jMenuItemBeendenActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // close the application
         System.exit(0);
@@ -1430,6 +1480,7 @@ public class GuiFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemChooseSyncFolder;
     private javax.swing.JMenuItem jMenuItemLoginLaden;
     private javax.swing.JMenuItem jMenuItemLoginSpeichern;
+    private javax.swing.JMenuItem jMenuItemShowSettings;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lbStatus;
     private javax.swing.JButton startSyncButton;

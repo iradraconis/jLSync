@@ -666,6 +666,7 @@ package com.iradraconis.jlsync;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.util.List;
 import java.io.FileWriter;
@@ -699,11 +700,6 @@ public class LoadCases {
     static Path dirPath = Paths.get(directoryPath);
     static Path settingsPath = Paths.get(filePath);
 
-    static String user;
-    static String password;
-    static String serverAddress;
-    static String port;
-    static String syncFolder;
 
     public static class Document {
         private String id;
@@ -755,20 +751,20 @@ public class LoadCases {
         try (FileReader reader = new FileReader(settingsPath.toFile())) {
             JsonObject settings = gson.fromJson(reader, JsonObject.class);
             // System.out.println("Settings loaded: " + settings);
-            user = settings.get("user").getAsString();
-            password = settings.get("password").getAsString();
-            serverAddress = settings.get("server").getAsString();
-            port = settings.get("port").getAsString();
-            syncFolder = settings.get("syncFolder").getAsString();
+            String user = settings.get("user").getAsString();
+            String password = settings.get("password").getAsString();
+            String server = settings.get("server").getAsString();
+            String port = settings.get("port").getAsString();
+            String syncFolder = settings.get("syncFolder").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void listCases() {
-        getSettings();
+    public static void listCases(String server, String port, String user, String password) {
+        
 
-        String url = "http://" + serverAddress + ":" + port + "/j-lawyer-io/rest/v1/cases/list";
+        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/list";
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();
@@ -794,10 +790,9 @@ public class LoadCases {
         }
     }
 
-    public static void dateiListeEmpfangen(String case_id, Map<String, List<Document>> documentsMap) {
-        getSettings();
+    public static void dateiListeEmpfangen(String case_id, Map<String, List<Document>> documentsMap, String server, String port, String user, String password) {
 
-        String url = "http://" + serverAddress + ":" + port + "/j-lawyer-io/rest/v1/cases/" + case_id + "/documents";
+        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/" + case_id + "/documents";
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();
@@ -856,7 +851,7 @@ public class LoadCases {
         }
     }
 
-    public static void dateiEmpfangen(String caseId, String documentId, String fileName, String aktenzeichen, String akteName) {
+    public static void dateiEmpfangen(String caseId, String documentId, String fileName, String aktenzeichen, String akteName, String server, String port, String user, String password) {
         String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
@@ -878,9 +873,10 @@ public class LoadCases {
             e.printStackTrace();
         }
 
- 
+        aktenzeichen = aktenzeichen.replaceAll("[^a-zA-Z0-9_\\-\\.]", "-");
+        akteName = akteName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "-");
         String folderName = aktenzeichen + "_" + akteName;
-        folderName = folderName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+        folderName = folderName.replaceAll("--", "-");
 
         File caseDir = new File(syncFolder + "/" + folderName);
         if (!caseDir.exists()) {
@@ -898,7 +894,7 @@ public class LoadCases {
         }
 
         String url = String.format("http://%s:%s/j-lawyer-io/rest/v1/cases/document/%s/content",
-                serverAddress, port, documentId);
+                server, port, documentId);
 
         String auth = user + ":" + password;
         String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
@@ -943,12 +939,11 @@ public class LoadCases {
         }
     }
 
-    public static void listCasesToSync(String principal_id, List<CaseInfo> casesLoadedToSync) {
-        getSettings();
-
+    public static void listCasesToSync(String principal_id, List<CaseInfo> casesLoadedToSync, String server, String port, String user, String password) {
+        
         principal_id = URLEncoder.encode(principal_id, StandardCharsets.UTF_8).replace("+", "%20");
 
-        String url = "http://" + serverAddress + ":" + port + "/j-lawyer-io/rest/v5/cases/list/synced/" + principal_id;
+        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v5/cases/list/synced/" + principal_id;
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();
@@ -963,7 +958,7 @@ public class LoadCases {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonResponse = response.body();
             Gson gson = new Gson();
-            List<Map<String, Object>> casesLoadedToSyncList = gson.fromJson(jsonResponse, List.class);
+            List<Map<String, Object>> casesLoadedToSyncList = gson.fromJson(jsonResponse, new TypeToken<List<Map<String, Object>>>() {}.getType());
             System.out.println("Anzahl der zu synchronisierenden Fälle: " + casesLoadedToSyncList.size());
 
             for (Map<String, Object> caseData : casesLoadedToSyncList) {
