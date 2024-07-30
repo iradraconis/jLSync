@@ -693,7 +693,6 @@ import java.util.Map;
 
 public class LoadCases {
 
-    private static Object casesLoaded;
 
     static String directoryPath = ".jL_Sync_Files_data";
     static String filePath = directoryPath + "/jL_Sync_Files_Settings.json";

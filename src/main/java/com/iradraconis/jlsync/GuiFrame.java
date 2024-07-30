@@ -694,10 +694,10 @@ import javax.swing.SwingUtilities;
 public class GuiFrame extends javax.swing.JFrame {
 
     private String syncFolder = System.getProperty("user.home") + "/jLSync/Akten";
-    private String principal_id;
-    private String server;
-    private String password;
-    private String port;
+    public String principalId;
+    public String server;
+    public String password;
+    public String port;
     
     /**
      * Creates new form guiframe
@@ -744,6 +744,8 @@ public class GuiFrame extends javax.swing.JFrame {
         jCheckBoxMenuItem6 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem7 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem8 = new javax.swing.JCheckBoxMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItemswitchSync = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -903,6 +905,18 @@ public class GuiFrame extends javax.swing.JFrame {
         jMenu2.add(jCheckBoxMenuItem8);
 
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Sync für einzelne Akten");
+
+        jMenuItemswitchSync.setText("Akte sync on / sync off");
+        jMenuItemswitchSync.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemswitchSyncActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItemswitchSync);
+
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
 
@@ -1218,8 +1232,8 @@ public class GuiFrame extends javax.swing.JFrame {
             }
             
             
-            principal_id = tfUser.getText();
-            if (principal_id.isEmpty()) {
+            principalId = tfUser.getText();
+            if (principalId.isEmpty()) {
                 final String status = "Fehler: Kein User Login vorhanden!";
                 SwingUtilities.invokeLater(() -> lbStatus.setText(status));
                 return;
@@ -1247,7 +1261,7 @@ public class GuiFrame extends javax.swing.JFrame {
             Map<String, List<LoadCases.Document>> documentsMap = new HashMap<>();
             
             
-            LoadCases.listCasesToSync(principal_id, casesLoadedToSync, tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
+            LoadCases.listCasesToSync(principalId, casesLoadedToSync, tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
 
             int totalCases = casesLoadedToSync.size();
             int casesProcessed = 0;
@@ -1260,7 +1274,7 @@ public class GuiFrame extends javax.swing.JFrame {
             // Zählen der Gesamtdokumente
             try {
                 for (LoadCases.CaseInfo caseInfo : casesLoadedToSync) {
-                    LoadCases.dateiListeEmpfangen(caseInfo.getCaseId(), documentsMap, server, port, principal_id, password);
+                    LoadCases.dateiListeEmpfangen(caseInfo.getCaseId(), documentsMap, server, port, principalId, password);
                     List<LoadCases.Document> documents = documentsMap.get(caseInfo.getCaseId());
                     if (documents != null) {
                         totalDocuments += documents.size();
@@ -1288,7 +1302,7 @@ public class GuiFrame extends javax.swing.JFrame {
                         String documentId = document.getId();
                         String documentName = document.getName();
                         
-                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principal_id, password);
+                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principalId, password);
 
                         // Aktualisieren des Dokumentenfortschritts
                         documentsProcessed++;
@@ -1326,7 +1340,7 @@ public class GuiFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemLoginSpeichernActionPerformed
 
     private void jMenuItemAktenLadenAktualisierenActionPerformed(java.awt.event.ActionEvent evt) {                                                                 
-        LoadCases.listCases(server, port, principal_id, password);
+        LoadCases.listCases(server, port, principalId, password);
         final String status = String.format("Aktenbestand mit Server abgeglichen, es kann synchronisiert werden."); 
         SwingUtilities.invokeLater(() -> lbStatus.setText(status));
     }
@@ -1453,6 +1467,15 @@ public class GuiFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jMenuItemShowSettingsActionPerformed
 
+    private void jMenuItemswitchSyncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemswitchSyncActionPerformed
+        String server = tfServer.getText();
+        String port = tfPort.getText();
+        String user = tfUser.getText();
+        String password = new String(tfPassword.getPassword());
+
+        new SwitchSyncFrame(server, port, user, password).setVisible(true);
+    }//GEN-LAST:event_jMenuItemswitchSyncActionPerformed
+
     private void jMenuItemBeendenActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // close the application
         System.exit(0);
@@ -1474,6 +1497,7 @@ public class GuiFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemAktenLadenAktualisieren;
     private javax.swing.JMenuItem jMenuItemBeenden;
@@ -1481,6 +1505,7 @@ public class GuiFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemLoginLaden;
     private javax.swing.JMenuItem jMenuItemLoginSpeichern;
     private javax.swing.JMenuItem jMenuItemShowSettings;
+    private javax.swing.JMenuItem jMenuItemswitchSync;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lbStatus;
     private javax.swing.JButton startSyncButton;
