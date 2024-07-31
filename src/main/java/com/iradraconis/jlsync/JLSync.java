@@ -664,7 +664,7 @@
 
 package com.iradraconis.jlsync;
 
-import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatMonocaiIJTheme;
 import javax.swing.SwingUtilities;
 
 /**
@@ -676,7 +676,7 @@ public class JLSync {
     public static void main(String[] args) {
         try {
             // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes#how-to-use
-            FlatArcOrangeIJTheme.setup();
+            FlatMonocaiIJTheme.setup();
         } catch (Exception e) {
             e.printStackTrace();
         }
