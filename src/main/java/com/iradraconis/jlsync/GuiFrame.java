@@ -1340,7 +1340,8 @@ public class GuiFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemLoginSpeichernActionPerformed
 
     private void jMenuItemAktenLadenAktualisierenActionPerformed(java.awt.event.ActionEvent evt) {                                                                 
-        LoadCases.listCases(server, port, principalId, password);
+        String password = new String(tfPassword.getPassword());
+        LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
         final String status = String.format("Aktenbestand mit Server abgeglichen, es kann synchronisiert werden."); 
         SwingUtilities.invokeLater(() -> lbStatus.setText(status));
     }

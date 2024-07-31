@@ -691,6 +691,8 @@ import java.util.Map;
  * @author max
  */
 
+// TODO: https / http 
+
 public class LoadCases {
 
 
@@ -745,20 +747,6 @@ public class LoadCases {
         }
     }
 
-    public static void getSettings() {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader(settingsPath.toFile())) {
-            JsonObject settings = gson.fromJson(reader, JsonObject.class);
-            // System.out.println("Settings loaded: " + settings);
-            String user = settings.get("user").getAsString();
-            String password = settings.get("password").getAsString();
-            String server = settings.get("server").getAsString();
-            String port = settings.get("port").getAsString();
-            String syncFolder = settings.get("syncFolder").getAsString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void listCases(String server, String port, String user, String password) {
         

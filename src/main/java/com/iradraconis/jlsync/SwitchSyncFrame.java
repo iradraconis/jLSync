@@ -31,7 +31,6 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
 
     
     
-    private LoadCases loadCases;
 
     static String directoryPath = ".jL_Sync_Files_data";
     static String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
@@ -39,10 +38,10 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
     static Path settingsPath = Paths.get(filePath);
     private String caseId;
    
-    private String server;
-    private String port;
-    private String user;
-    private String password;
+    private final String server;
+    private final String port;
+    private final String user;
+    private final String password;
 
     /**
      * Creates new form SwitchSync
