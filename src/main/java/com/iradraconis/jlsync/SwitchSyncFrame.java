@@ -142,7 +142,7 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
         jLabelSyncStatusL2 = new javax.swing.JLabel();
         jLabelSyncStatusL1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
 
         jLabel1.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
