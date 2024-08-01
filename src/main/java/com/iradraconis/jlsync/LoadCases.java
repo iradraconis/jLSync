@@ -686,6 +686,8 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author max
@@ -748,7 +750,7 @@ public class LoadCases {
     }
 
 
-    public static void listCases(String server, String port, String user, String password) {
+    public static void listCases(String server, String port, String user, String password) throws Exception {
         
 
         String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/list";
@@ -765,15 +767,23 @@ public class LoadCases {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonResponse = response.body();
+            
+           
+            if (jsonResponse.length() > 2) {
+                JOptionPane.showMessageDialog(null, "Fälle aktualisiert", "Erfolg", JOptionPane.ERROR_MESSAGE);
+            }
+
             try (FileWriter writer = new FileWriter(directoryPath + "/" + "jL_Sync_Files_Cases.json")) {
                 writer.write(jsonResponse);
-            } catch (IOException e) {
+                } catch (IOException e) {
                 e.printStackTrace();
             }
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Verbindungsfehler");
+            JOptionPane.showMessageDialog(null, "Verbindungsfehler", "Fehler", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            
         }
     }
 

@@ -673,10 +673,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -689,6 +693,7 @@ import javax.swing.SwingUtilities;
 
 // TODO: im Sync Ordner alle Dateien nach Dateityp in Unterordner verschieben? (chronologie geht verloren)
 // TODO: Test in Windows
+// TODO: Hinweis wenn Passwort gespeichert wird, dass Speicherung im Klartext erfolgt
 // Hinweis nach x Programmstarts, dass Aktenbestand zu aktualisieren ist?
 
 public class GuiFrame extends javax.swing.JFrame {
@@ -773,6 +778,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
         tfPassword.setToolTipText("Passwort eingeben");
 
+        lbStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbStatus.setText(" ");
 
         jMenu1.setText("Einstellungen");
@@ -1214,6 +1220,9 @@ public class GuiFrame extends javax.swing.JFrame {
     
     private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {      
         new Thread(() -> {
+            
+            password = new String(tfPassword.getPassword());
+            
             // prüfe ob jL_Sync_Files_Cases.json existiert
             Path jsonFilePath = Paths.get(".jL_Sync_Files_data/jL_Sync_Files_Cases.json");
             if (!Files.exists(jsonFilePath)) {
@@ -1222,10 +1231,14 @@ public class GuiFrame extends javax.swing.JFrame {
                 SwingUtilities.invokeLater(() -> {
                 int dialogResult = JOptionPane.showConfirmDialog(null, status + "\nAktenbestand jetzt abgleichen?", "Fehler", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
-
-                    LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), tfPassword.getText());
-                    String temp_status2 = "Aktenbestand mit Server abgeglichen, es kann synchronisiert werden.";
-                    lbStatus.setText(temp_status2);
+                    try {
+                        LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
+                    } catch (Exception ex) {
+                        Logger.getLogger(GuiFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                
+                    
                 }
                 });
                 return;
@@ -1341,9 +1354,11 @@ public class GuiFrame extends javax.swing.JFrame {
 
     private void jMenuItemAktenLadenAktualisierenActionPerformed(java.awt.event.ActionEvent evt) {                                                                 
         String password = new String(tfPassword.getPassword());
-        LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
-        final String status = String.format("Aktenbestand mit Server abgeglichen, es kann synchronisiert werden."); 
-        SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+        try {
+            LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
+        } catch (Exception ex) {
+            Logger.getLogger(GuiFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void jMenuItemChooseSyncFolderActionPerformed(java.awt.event.ActionEvent evt) {                                                          
@@ -1448,25 +1463,37 @@ public class GuiFrame extends javax.swing.JFrame {
         saveFileTypeSettings();
     }//GEN-LAST:event_jCheckBoxMenuItem7ActionPerformed
 
-    private void jMenuItemShowSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemShowSettingsActionPerformed
+    private void jMenuItemShowSettingsActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         // show joptionpane the settings file
         String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path jsonFilePath = Paths.get(filePath);
-
+    
         try {
             if (Files.exists(jsonFilePath)) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 try (FileReader reader = new FileReader(filePath)) {
                     JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-                    JOptionPane.showMessageDialog(null, jsonObject.toString(), "Einstellungen", JOptionPane.INFORMATION_MESSAGE);
+                    StringBuilder formattedOutput = new StringBuilder();
+                    
+                    for (Map.Entry<String, com.google.gson.JsonElement> entry : jsonObject.entrySet()) {
+                        formattedOutput.append(entry.getKey())
+                                       .append(": ")
+                                       .append(entry.getValue().getAsString())
+                                       .append("\n");
+                    }
+                    
+                    JOptionPane.showMessageDialog(null, formattedOutput.toString(), "Einstellungen", JOptionPane.INFORMATION_MESSAGE);
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "Die Einstellungsdatei wurde nicht gefunden.", "Fehler", JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Fehler beim Lesen der Einstellungsdatei.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
-        
-    }//GEN-LAST:event_jMenuItemShowSettingsActionPerformed
+    }
+    //GEN-LAST:event_jMenuItemShowSettingsActionPerformed
 
     private void jMenuItemswitchSyncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemswitchSyncActionPerformed
         String server = tfServer.getText();
