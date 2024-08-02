@@ -665,6 +665,9 @@
 package com.iradraconis.jlsync;
 
 import com.formdev.flatlaf.intellijthemes.FlatMonocaiIJTheme;
+import java.net.URL;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
@@ -689,6 +692,25 @@ public class JLSync {
         syncGui.setTitle("j-Lawyer-Sync");
         syncGui.setLocationRelativeTo(null);
         syncGui.setVisible(true);
-
+        
+        setFrameIcon(syncGui, "/com/iradraconis/jlsync/resources/icon.png"); 
     }
+    
+    private static void setFrameIcon(JFrame frame, String iconPath) {
+        try {
+            // Lade das Icon
+            URL iconURL = JLSync.class.getResource(iconPath);
+            if (iconURL != null) {
+                ImageIcon icon = new ImageIcon(iconURL);
+                // Setze das Icon für das Hauptfenster
+                frame.setIconImage(icon.getImage());
+            } else {
+                System.err.println("Icon-Ressource nicht gefunden: " + iconPath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+   
 }

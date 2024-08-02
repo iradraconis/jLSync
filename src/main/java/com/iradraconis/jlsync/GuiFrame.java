@@ -673,12 +673,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -709,9 +707,9 @@ public class GuiFrame extends javax.swing.JFrame {
      */
     public GuiFrame() {
         initComponents();
-        loadSettingsInGui();
+        loadSettingsInGui();        
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -999,7 +997,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
 
     private void loadSettingsInGui() {
         String directoryPath = ".jL_Sync_Files_data";
