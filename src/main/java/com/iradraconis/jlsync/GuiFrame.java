@@ -751,6 +751,9 @@ public class GuiFrame extends javax.swing.JFrame {
         jCheckBoxMenuItem8 = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItemswitchSync = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -923,6 +926,21 @@ public class GuiFrame extends javax.swing.JFrame {
         jMenu3.add(jMenuItemswitchSync);
 
         jMenuBar1.add(jMenu3);
+
+        jMenu4.setText("Über");
+
+        jMenuItem1.setText("V. 0.3 - 02.08.2024");
+        jMenu4.add(jMenuItem1);
+
+        jMenuItem2.setText("zur GitHub Seite");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu4);
 
         setJMenuBar(jMenuBar1);
 
@@ -1493,7 +1511,7 @@ public class GuiFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Fehler beim Lesen der Einstellungsdatei.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
     }
-    //GEN-LAST:event_jMenuItemShowSettingsActionPerformed
+                                                         
 
     private void jMenuItemswitchSyncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemswitchSyncActionPerformed
         String server = tfServer.getText();
@@ -1503,6 +1521,18 @@ public class GuiFrame extends javax.swing.JFrame {
 
         new SwitchSyncFrame(server, port, user, password).setVisible(true);
     }//GEN-LAST:event_jMenuItemswitchSyncActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        
+        // open link in system browser https://github.com/iradraconis/jLSync
+        try {
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://github.com/iradraconis/jLSync"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItemBeendenActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // close the application
@@ -1526,7 +1556,10 @@ public class GuiFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemAktenLadenAktualisieren;
     private javax.swing.JMenuItem jMenuItemBeenden;
     private javax.swing.JMenuItem jMenuItemChooseSyncFolder;
