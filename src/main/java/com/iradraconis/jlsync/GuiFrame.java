@@ -927,7 +927,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
         jMenu4.setText("Über");
 
-        jMenuItem1.setText("V. 0.3 - 02.08.2024");
+        jMenuItem1.setText("V. 0.4 - 02.08.2024");
         jMenu4.add(jMenuItem1);
 
         jMenuItem2.setText("zur GitHub Seite");
