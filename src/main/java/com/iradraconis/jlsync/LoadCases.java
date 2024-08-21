@@ -871,6 +871,13 @@ public class LoadCases {
         }
 
         aktenzeichen = aktenzeichen.replaceAll("[^a-zA-Z0-9_\\-\\.]", "-");
+        akteName = akteName.replace("ä", "ae")
+                           .replace("ö", "oe")
+                           .replace("ü", "ue")
+                           .replace("Ä", "Ae")
+                           .replace("Ö", "Oe")
+                           .replace("Ü", "Ue")
+                           .replace("ß", "ss");
         akteName = akteName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "-");
         String folderName = aktenzeichen + "_" + akteName;
         folderName = folderName.replaceAll("--", "-");
