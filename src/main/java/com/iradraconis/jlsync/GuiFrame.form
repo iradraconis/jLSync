@@ -295,11 +295,13 @@
     </Component>
     <Component class="javax.swing.JTextField" name="tfServer">
       <Properties>
+        <Property name="text" type="java.lang.String" value="http://..."/>
         <Property name="toolTipText" type="java.lang.String" value="Server eingeben"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfPort">
       <Properties>
+        <Property name="text" type="java.lang.String" value="8080"/>
         <Property name="toolTipText" type="java.lang.String" value="Port eingeben (z.B. 8080)"/>
       </Properties>
     </Component>

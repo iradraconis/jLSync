@@ -78,7 +78,7 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
     public void switchSync(String caseId, String caseName, String server, String port, String user, String password, String onOff) throws FileNotFoundException {
         boolean toggle = false;
 
-        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v5/cases/syncsettings";
+        String url = server + ":" + port + "/j-lawyer-io/rest/v5/cases/syncsettings";
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();

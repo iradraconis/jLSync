@@ -695,7 +695,6 @@ import javax.swing.JOptionPane;
  * @author max
  */
 
-// TODO: https / http 
 
 public class LoadCases {
 
@@ -755,7 +754,7 @@ public class LoadCases {
     public static void listCases(String server, String port, String user, String password) throws Exception {
         
 
-        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/list";
+        String url = server + ":" + port + "/j-lawyer-io/rest/v1/cases/list";
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();
@@ -840,7 +839,7 @@ public class LoadCases {
     
     public static void dateiListeEmpfangen(String case_id, Map<String, List<Document>> documentsMap, String server, String port, String user, String password) {
 
-        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/" + case_id + "/documents";
+        String url = server + ":" + port + "/j-lawyer-io/rest/v1/cases/" + case_id + "/documents";
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();
@@ -948,7 +947,7 @@ public class LoadCases {
             return; // Wenn die Datei existiert, abbrechen
         }
 
-        String url = String.format("http://%s:%s/j-lawyer-io/rest/v1/cases/document/%s/content",
+        String url = String.format("%s:%s/j-lawyer-io/rest/v1/cases/document/%s/content",
                 server, port, documentId);
 
         String auth = user + ":" + password;
@@ -998,7 +997,7 @@ public class LoadCases {
         
         principal_id = URLEncoder.encode(principal_id, StandardCharsets.UTF_8).replace("+", "%20");
 
-        String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v5/cases/list/synced/" + principal_id;
+        String url = server + ":" + port + "/j-lawyer-io/rest/v5/cases/list/synced/" + principal_id;
 
         String auth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
         HttpClient client = HttpClient.newHttpClient();

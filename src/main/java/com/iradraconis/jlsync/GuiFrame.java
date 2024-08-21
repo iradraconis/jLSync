@@ -765,8 +765,10 @@ public class GuiFrame extends javax.swing.JFrame {
 
         tfUser.setToolTipText("Benutzernamen eingeben");
 
+        tfServer.setText("http://...");
         tfServer.setToolTipText("Server eingeben");
 
+        tfPort.setText("8080");
         tfPort.setToolTipText("Port eingeben (z.B. 8080)");
 
         startSyncButton.setText("Synchronisation starten");
