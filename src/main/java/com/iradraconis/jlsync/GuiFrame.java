@@ -701,7 +701,6 @@ public class GuiFrame extends javax.swing.JFrame {
     public String server;
     public String password;
     public String port;
-    public String latestUpdateToCases;
     
     /**
      * Creates new form guiframe
@@ -1234,50 +1233,7 @@ public class GuiFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
-    public static void saveLastUpdateOfCases(String latestUpdateToCases) {
-        String directoryPath = ".jL_Sync_Files_data";
-        String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
-        Path dirPath = Paths.get(directoryPath);
-        Path jsonFilePath = Paths.get(filePath);
-
-        try {
-            
-            if (!Files.exists(dirPath)) {
-                Files.createDirectories(dirPath);
-            }
-
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            JsonObject jsonObject;
-
-            // Check if the JSON file exists
-            if (Files.exists(jsonFilePath)) {
-                
-                // Read the JSON file
-                try (FileReader reader = new FileReader(filePath)) {
-                    jsonObject = gson.fromJson(reader, JsonObject.class);
-                    
-                    // save latest moment cases were updated
-                    jsonObject.addProperty("Aktenstand", latestUpdateToCases);                   
-
-                    try (FileWriter writer = new FileWriter(filePath)) {
-                        gson.toJson(jsonObject, writer);
-                        System.out.println("JSON file updated.");
-                    } 
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    
-                }
-            } else {
-                System.out.println("Keine Einstellungsdatei gefunden.");
-            }
-           
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
+        
     private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {      
         new Thread(() -> {
             

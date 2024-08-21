@@ -687,7 +687,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import com.iradraconis.jlsync.GuiFrame;
 
 import javax.swing.JOptionPane;
 
@@ -784,7 +783,7 @@ public class LoadCases {
 
             // create string with date and time
             String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
-            GuiFrame.saveLastUpdateOfCases(timeStamp + " Uhr");
+            saveLastUpdateOfCases(timeStamp + " Uhr");
             System.out.println("Fälle aktualisiert am: " + timeStamp);
 
 
@@ -796,6 +795,49 @@ public class LoadCases {
         }
     }
 
+    private static void saveLastUpdateOfCases(String latestUpdateToCases) {
+        String directoryPath = ".jL_Sync_Files_data";
+        String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
+        Path dirPath = Paths.get(directoryPath);
+        Path jsonFilePath = Paths.get(filePath);
+
+        try {
+            
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonObject jsonObject;
+
+            // Check if the JSON file exists
+            if (Files.exists(jsonFilePath)) {
+                
+                // Read the JSON file
+                try (FileReader reader = new FileReader(filePath)) {
+                    jsonObject = gson.fromJson(reader, JsonObject.class);
+                    
+                    // save latest moment cases were updated
+                    jsonObject.addProperty("Aktenstand", latestUpdateToCases);                   
+
+                    try (FileWriter writer = new FileWriter(filePath)) {
+                        gson.toJson(jsonObject, writer);
+                        System.out.println("JSON file updated.");
+                    } 
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    
+                }
+            } else {
+                System.out.println("Keine Einstellungsdatei gefunden.");
+            }
+           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public static void dateiListeEmpfangen(String case_id, Map<String, List<Document>> documentsMap, String server, String port, String user, String password) {
 
         String url = "http://" + server + ":" + port + "/j-lawyer-io/rest/v1/cases/" + case_id + "/documents";
