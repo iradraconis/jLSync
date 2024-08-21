@@ -683,8 +683,11 @@ import java.util.Base64;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
+import com.iradraconis.jlsync.GuiFrame;
 
 import javax.swing.JOptionPane;
 
@@ -778,6 +781,12 @@ public class LoadCases {
                 } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // create string with date and time
+            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
+            GuiFrame.saveLastUpdateOfCases(timeStamp + " Uhr");
+            System.out.println("Fälle aktualisiert am: " + timeStamp);
+
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Verbindungsfehler");
