@@ -868,7 +868,7 @@ public class GuiFrame extends javax.swing.JFrame {
         jMenu2.add(jCheckBoxMenuItem3);
 
         jCheckBoxMenuItem4.setSelected(true);
-        jCheckBoxMenuItem4.setText(".jpg/.jpeg/.png");
+        jCheckBoxMenuItem4.setText(".jpg");
         jCheckBoxMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxMenuItem4ActionPerformed(evt);
@@ -928,7 +928,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
         jMenu4.setText("Über");
 
-        jMenuItem1.setText("V. 0.5 - 21.08.2024");
+        jMenuItem1.setText("V. 0.6 - 26.08.2024");
         jMenu4.add(jMenuItem1);
 
         jMenuItem2.setText("zur GitHub Seite");
