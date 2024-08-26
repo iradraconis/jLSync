@@ -878,12 +878,20 @@ public class LoadCases {
             List<Document> filteredDocuments = new ArrayList<>();
             for (Document document : documents) {
                 String fileExtension = getFileExtension(document.getName());
-                if (jsonObject != null && jsonObject.has(fileExtension) && !jsonObject.get(fileExtension).getAsBoolean()) {
+                
+                // Gruppierung von .jpg, .jpeg und .png
+                if (fileExtension.equals(".jpg") || fileExtension.equals(".jpeg") || fileExtension.equals(".png")) {
+                    if (jsonObject != null && jsonObject.has(".jpg") && !jsonObject.get(".jpg").getAsBoolean()) {
+                        System.out.println("Bilddatei wird nicht hinzugefügt: " + document.getName());
+                        continue;
+                    }
+                } else if (jsonObject != null && jsonObject.has(fileExtension) && !jsonObject.get(fileExtension).getAsBoolean()) {
                     System.out.println("Dokument mit Endung " + fileExtension + " wird nicht hinzugefügt: " + document.getName());
                     continue;
                 }
                 filteredDocuments.add(document);
             }
+
 
             documentsMap.put(case_id, filteredDocuments);
 
@@ -984,14 +992,13 @@ public class LoadCases {
     }
 
     private static String getFileExtension(String fileName) {
-        if (fileName.length() > 4 && fileName.charAt(fileName.length() - 4) == '.') {
-            return fileName.substring(fileName.length() - 4);
-        } else if (fileName.length() > 3 && fileName.charAt(fileName.length() - 3) == '.') {
-            return fileName.substring(fileName.length() - 3);
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            return fileName.substring(lastDotIndex).toLowerCase();
         } else {
             return ""; // Keine Dateiendung vorhanden oder ungültiges Format
         }
-    }
+    }    
 
     public static void listCasesToSync(String principal_id, List<CaseInfo> casesLoadedToSync, String server, String port, String user, String password) {
         

@@ -868,7 +868,7 @@ public class GuiFrame extends javax.swing.JFrame {
         jMenu2.add(jCheckBoxMenuItem3);
 
         jCheckBoxMenuItem4.setSelected(true);
-        jCheckBoxMenuItem4.setText(".jpg");
+        jCheckBoxMenuItem4.setText(".jpg/.jpeg/.png");
         jCheckBoxMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxMenuItem4ActionPerformed(evt);
@@ -1143,29 +1143,32 @@ public class GuiFrame extends javax.swing.JFrame {
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
-
+    
         try {
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
             }
-
+    
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JsonObject jsonObject;
-
+    
             if (Files.exists(jsonFilePath)) {
                 try (FileReader reader = new FileReader(filePath)) {
                     jsonObject = gson.fromJson(reader, JsonObject.class);
-
+    
                     // Update file type settings
                     jsonObject.addProperty(".eml", jCheckBoxMenuItem1.isSelected());
                     jsonObject.addProperty(".html", jCheckBoxMenuItem2.isSelected());
                     jsonObject.addProperty(".bea", jCheckBoxMenuItem3.isSelected());
-                    jsonObject.addProperty(".jpg", jCheckBoxMenuItem4.isSelected());
+                    boolean isImageSelected = jCheckBoxMenuItem4.isSelected();
+                    jsonObject.addProperty(".jpg", isImageSelected);
+                    jsonObject.addProperty(".jpeg", isImageSelected);
+                    jsonObject.addProperty(".png", isImageSelected);
                     jsonObject.addProperty(".pdf", jCheckBoxMenuItem5.isSelected());
                     jsonObject.addProperty(".odt", jCheckBoxMenuItem6.isSelected());
                     jsonObject.addProperty(".ods", jCheckBoxMenuItem7.isSelected());
                     jsonObject.addProperty(".txt", jCheckBoxMenuItem8.isSelected());
-
+    
                     try (FileWriter writer = new FileWriter(filePath)) {
                         gson.toJson(jsonObject, writer);
                         System.out.println("JSON file updated with file type settings.");
@@ -1176,12 +1179,15 @@ public class GuiFrame extends javax.swing.JFrame {
                 jsonObject.addProperty(".eml", jCheckBoxMenuItem1.isSelected());
                 jsonObject.addProperty(".html", jCheckBoxMenuItem2.isSelected());
                 jsonObject.addProperty(".bea", jCheckBoxMenuItem3.isSelected());
-                jsonObject.addProperty(".jpg", jCheckBoxMenuItem4.isSelected());
+                boolean isImageSelected = jCheckBoxMenuItem4.isSelected();
+                jsonObject.addProperty(".jpg", isImageSelected);
+                jsonObject.addProperty(".jpeg", isImageSelected);
+                jsonObject.addProperty(".png", isImageSelected);
                 jsonObject.addProperty(".pdf", jCheckBoxMenuItem5.isSelected());
                 jsonObject.addProperty(".odt", jCheckBoxMenuItem6.isSelected());
                 jsonObject.addProperty(".ods", jCheckBoxMenuItem7.isSelected());
                 jsonObject.addProperty(".txt", jCheckBoxMenuItem8.isSelected());
-
+    
                 try (FileWriter writer = new FileWriter(filePath)) {
                     gson.toJson(jsonObject, writer);
                     System.out.println("JSON file created with file type settings.");
@@ -1192,17 +1198,18 @@ public class GuiFrame extends javax.swing.JFrame {
         }
     }
     
+    
     private void loadFileTypeSettings() {
         String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path jsonFilePath = Paths.get(filePath);
-
+    
         try {
             if (Files.exists(jsonFilePath)) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 try (FileReader reader = new FileReader(filePath)) {
                     JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-
+    
                     // Load file type settings if they exist
                     if (jsonObject.has(".eml")) {
                         jCheckBoxMenuItem1.setSelected(jsonObject.get(".eml").getAsBoolean());
@@ -1213,8 +1220,11 @@ public class GuiFrame extends javax.swing.JFrame {
                     if (jsonObject.has(".bea")) {
                         jCheckBoxMenuItem3.setSelected(jsonObject.get(".bea").getAsBoolean());
                     }
-                    if (jsonObject.has(".jpg")) {
-                        jCheckBoxMenuItem4.setSelected(jsonObject.get(".jpg").getAsBoolean());
+                    if (jsonObject.has(".jpg") || jsonObject.has(".jpeg") || jsonObject.has(".png")) {
+                        boolean isSelected = jsonObject.get(".jpg").getAsBoolean() || 
+                                             jsonObject.get(".jpeg").getAsBoolean() ||
+                                             jsonObject.get(".png").getAsBoolean();
+                        jCheckBoxMenuItem4.setSelected(isSelected);
                     }
                     if (jsonObject.has(".pdf")) {
                         jCheckBoxMenuItem5.setSelected(jsonObject.get(".pdf").getAsBoolean());
@@ -1223,10 +1233,10 @@ public class GuiFrame extends javax.swing.JFrame {
                         jCheckBoxMenuItem6.setSelected(jsonObject.get(".odt").getAsBoolean());
                     }
                     if (jsonObject.has(".ods")) {
-                        jCheckBoxMenuItem6.setSelected(jsonObject.get(".ods").getAsBoolean());
+                        jCheckBoxMenuItem7.setSelected(jsonObject.get(".ods").getAsBoolean());
                     }
                     if (jsonObject.has(".txt")) {
-                        jCheckBoxMenuItem6.setSelected(jsonObject.get(".txt").getAsBoolean());
+                        jCheckBoxMenuItem8.setSelected(jsonObject.get(".txt").getAsBoolean());
                     }
                 }
             }
