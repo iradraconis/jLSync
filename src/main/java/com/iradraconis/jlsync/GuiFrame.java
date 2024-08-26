@@ -689,7 +689,6 @@ import javax.swing.SwingUtilities;
  * @author max
  */
 
-// TODO: im Sync Ordner alle Dateien nach Dateityp in Unterordner verschieben? (chronologie geht verloren)
 // TODO: Test in Windows
 // TODO: Hinweis wenn Passwort gespeichert wird, dass Speicherung im Klartext erfolgt
 // Hinweis nach x Programmstarts, dass Aktenbestand zu aktualisieren ist?
@@ -1290,10 +1289,17 @@ public class GuiFrame extends javax.swing.JFrame {
           
             List<LoadCases.CaseInfo> casesLoadedToSync = new ArrayList<>();
             Map<String, List<LoadCases.Document>> documentsMap = new HashMap<>();
-            
-            
-            LoadCases.listCasesToSync(principalId, casesLoadedToSync, tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
+           
+           
+            try {
+                LoadCases.listCasesToSync(principalId, casesLoadedToSync, tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
 
+            } catch (Exception e) {
+                final String status = "Fehler. Verbindung prüfen!";
+                SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+                return;
+            }
+            
             int totalCases = casesLoadedToSync.size();
             int casesProcessed = 0;
             int totalDocuments = 0;
@@ -1376,6 +1382,8 @@ public class GuiFrame extends javax.swing.JFrame {
             LoadCases.listCases(tfServer.getText(), tfPort.getText(), tfUser.getText(), password);
         } catch (Exception ex) {
             Logger.getLogger(GuiFrame.class.getName()).log(Level.SEVERE, null, ex);
+            final String status = "Fehler: Login-Daten oder Verbindung prüfen!"; 
+            SwingUtilities.invokeLater(() -> lbStatus.setText(status));
         }
     }
 
