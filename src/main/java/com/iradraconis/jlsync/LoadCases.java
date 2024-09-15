@@ -708,6 +708,7 @@ public class LoadCases {
     public static class Document {
         private String id;
         private String name;
+        private int version;
 
         public String getId() {
             return id;
@@ -719,6 +720,10 @@ public class LoadCases {
 
         public String getName() {
             return name;
+        }
+        
+        public int getVersion() {
+            return version;
         }
 
         public void setName(String name) {
@@ -882,11 +887,11 @@ public class LoadCases {
                 // Gruppierung von .jpg, .jpeg und .png
                 if (fileExtension.equals(".jpg") || fileExtension.equals(".jpeg") || fileExtension.equals(".png")) {
                     if (jsonObject != null && jsonObject.has(".jpg") && !jsonObject.get(".jpg").getAsBoolean()) {
-                        System.out.println("Bilddatei wird nicht hinzugefügt: " + document.getName());
+                        //System.out.println("Bilddatei wird nicht hinzugefügt: " + document.getName());
                         continue;
                     }
                 } else if (jsonObject != null && jsonObject.has(fileExtension) && !jsonObject.get(fileExtension).getAsBoolean()) {
-                    System.out.println("Dokument mit Endung " + fileExtension + " wird nicht hinzugefügt: " + document.getName());
+                    // System.out.println("Dokument mit Endung " + fileExtension + " wird nicht hinzugefügt: " + document.getName());
                     continue;
                 }
                 filteredDocuments.add(document);
@@ -895,10 +900,10 @@ public class LoadCases {
 
             documentsMap.put(case_id, filteredDocuments);
 
-            for (Document document : filteredDocuments) {
-                System.out.println("Dokument ID: " + document.getId());
-                System.out.println("Dokument Name: " + document.getName());
-            }
+//            for (Document document : filteredDocuments) {
+//                System.out.println("Dokument ID: " + document.getId());
+//                System.out.println("Dokument Name: " + document.getName());
+//            }
 
         } catch (Exception e) {
             System.out.println("Verbindungsfehler oder Fehler beim Verarbeiten der Antwort");
@@ -946,15 +951,11 @@ public class LoadCases {
         }
 
         // Sicherstellen, dass der Dateiname keine inkompatiblen Zeichen enthält und '/' durch '-' ersetzt wird
-        fileName = fileName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_").replace("/", "-");
+        //fileName = fileName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_").replace("/", "-");
 
         File file = new File(caseDir, fileName);
 
-        // Überprüfen, ob die Datei bereits existiert
-        if (file.exists()) {
-            return; // Wenn die Datei existiert, abbrechen
-        }
-
+        
         String url = String.format("%s:%s/j-lawyer-io/rest/v1/cases/document/%s/content",
                 server, port, documentId);
 
@@ -981,7 +982,7 @@ public class LoadCases {
                     stream.write(decodedBytes);
                 }
 
-                System.out.println("Datei heruntergeladen: " + file.getAbsolutePath());
+                // System.out.println("Datei heruntergeladen: " + file.getAbsolutePath());
 
             } else {
                 System.out.println("Fehler beim Herunterladen der Datei. Statuscode: " + response.statusCode());

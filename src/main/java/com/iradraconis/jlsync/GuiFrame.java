@@ -667,6 +667,7 @@ package com.iradraconis.jlsync;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -700,6 +701,8 @@ public class GuiFrame extends javax.swing.JFrame {
     public String server;
     public String password;
     public String port;
+
+    private final Object fileLock = new Object(); // Lock-Objekt für die Synchronisierung
     
     /**
      * Creates new form guiframe
@@ -1348,8 +1351,19 @@ public class GuiFrame extends javax.swing.JFrame {
                     for (LoadCases.Document document : documents) {
                         String documentId = document.getId();
                         String documentName = document.getName();
-                        
-                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principalId, password);
+                        int documentVersion = document.getVersion();
+
+                                              
+                        if (shouldLoadDocument(documentId, documentVersion)) {
+                            
+                            LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principalId, password);
+                            // Speichere Dokumentinformationen in der lokalen Datei
+                            saveDocumentDetails(documentId, documentName, documentVersion);
+                        } else {
+                            System.out.println("Dokument " + documentId + " wird nicht geladen, da die neue Version nicht größer ist.");
+                        }
+
+
 
                         // Aktualisieren des Dokumentenfortschritts
                         documentsProcessed++;
@@ -1373,6 +1387,7 @@ public class GuiFrame extends javax.swing.JFrame {
                 for (LoadCases.Document document : documents) {
                     System.out.println("\tDokument ID: " + document.getId());
                     System.out.println("\tDokument Name: " + document.getName());
+                    System.out.println("\tDokument Version: " + document.getVersion());
                 }
             }
         }).start();
@@ -1394,6 +1409,134 @@ public class GuiFrame extends javax.swing.JFrame {
             Logger.getLogger(GuiFrame.class.getName()).log(Level.SEVERE, null, ex);
             final String status = "Fehler: Login-Daten oder Verbindung prüfen!"; 
             SwingUtilities.invokeLater(() -> lbStatus.setText(status));
+        }
+    }
+
+    private void saveDocumentDetails(String documentId, String documentName, int documentVersion) {
+        String directoryPath = ".jL_Sync_Files_data";
+        String filePath = directoryPath + "/files_local.json";
+        Path dirPath = Paths.get(directoryPath);
+        Path jsonFilePath = Paths.get(filePath);
+    
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject jsonObject = new JsonObject();
+    
+        try {
+            
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
+    
+            // Prüfen, ob die JSON-Datei existiert und falls ja, die existierenden Inhalte laden
+            if (Files.exists(jsonFilePath)) {
+                try (FileReader reader = new FileReader(filePath)) {
+                    jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Fehler beim Lesen der Datei 'files_local.json'.");
+                    return; 
+                }
+            }
+    
+            // Prüfen, ob die documentId bereits vorhanden ist
+            if (!jsonObject.has(documentId)) {
+                // Neue Dokumentinformationen hinzufügen
+                JsonObject documentDetails = new JsonObject();
+                documentDetails.addProperty("documentName", documentName);
+                documentDetails.addProperty("documentVersion", documentVersion);
+                jsonObject.add(documentId, documentDetails);
+            
+                // Aktualisierte Daten in die Datei schreiben
+                try (FileWriter writer = new FileWriter(filePath)) {
+                    gson.toJson(jsonObject, writer);
+                    writer.flush(); // Stellen Sie sicher, dass der Writer die Daten in die Datei schreibt
+                    System.out.println("Dokumentdetails wurden in 'files_local.json' gespeichert.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Fehler beim Schreiben der Datei 'files_local.json'.");
+                }
+            } else {
+                JsonObject documentDetails = jsonObject.getAsJsonObject(documentId);
+                int savedVersion = documentDetails.get("documentVersion").getAsInt();
+            
+                // Prüfen, ob die neue Version größer ist als die gespeicherte Version
+                if (documentVersion > savedVersion) {
+                    // Aktualisieren der Dokumentinformationen
+                    documentDetails.addProperty("documentName", documentName); 
+                    documentDetails.addProperty("documentVersion", documentVersion);
+                    jsonObject.add(documentId, documentDetails);
+            
+                    // Aktualisierte Daten in die Datei schreiben
+                    try (FileWriter writer = new FileWriter(filePath)) {
+                        gson.toJson(jsonObject, writer);
+                        writer.flush(); // Stell sicher, dass der Writer die Daten in die Datei schreibt
+                        System.out.println("Dokumentdetails wurden in 'files_local.json' aktualisiert.");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Fehler beim Schreiben der Datei 'files_local.json'.");
+                    }
+                } else {
+                    System.out.println("Dokument mit ID " + documentId + " ist bereits vorhanden und die gespeicherte Version ist gleich oder neuer. Keine Aktualisierung erforderlich.");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Allgemeiner Fehler beim Speichern der Dokumentdetails.");
+        }
+    }
+    
+
+    // Prüfen, ob ein Dokument geladen werden soll anhand der documentId und der neuen Version
+    // Rückgabe: true, wenn das Dokument geladen werden soll, andernfalls false
+    private boolean shouldLoadDocument(String documentId, int remoteVersion) {
+        String directoryPath = ".jL_Sync_Files_data";
+        String filePath = directoryPath + "/files_local.json";
+        Path jsonFilePath = Paths.get(filePath);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonObject jsonObject = new JsonObject();
+    
+        synchronized (fileLock) { // Synchronisierter lock
+            try {
+                if (Files.exists(jsonFilePath)) {
+                    try (FileReader reader = new FileReader(filePath)) {
+                        jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Fehler beim Lesen der Datei 'files_local.json'.");
+                        return false; 
+                    }
+    
+                    // Version aus der Datei extrahieren, wenn die documentId existiert
+                    if (jsonObject.has(documentId)) {
+                        JsonObject documentDetails = jsonObject.getAsJsonObject(documentId);
+                        int savedVersion = documentDetails.get("documentVersion").getAsInt();
+                        System.out.println("Gefundene Version für Dokument ID " + documentId + ": " + savedVersion);
+                        
+                        // Prüfen, ob die neue Version größer ist als die gespeicherte Version
+                        if (remoteVersion > savedVersion) {
+                            System.out.println("Dokument ID " + documentId + " wird geladen, da die neue Version größer ist.");
+                            return true;
+                        } else {
+                            System.out.println("Dokument ID " + documentId + " wird nicht geladen, da die neue Version nicht größer ist.");
+                            return false;
+                        }
+
+                    } else {
+                        System.out.println("Dokument ID " + documentId + " existiert nicht. Dokument wird geladen.");
+                        // documentId existiert nicht, Dokument sollte geladen werden
+                        return true;
+                    }
+                } else {
+                    System.out.println("Datei 'files_local.json' existiert nicht. Alle Dokumente werden geladen.");
+                    // Datei existiert nicht, Dokument sollte geladen werden
+                    return true;
+                }
+    
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Fehler beim Überprüfen, ob das Dokument geladen werden soll.");
+                return false; // Im Falle eines Fehlers
+            }
         }
     }
 
