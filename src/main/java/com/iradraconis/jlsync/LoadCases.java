@@ -891,7 +891,7 @@ public class LoadCases {
                         continue;
                     }
                 } else if (jsonObject != null && jsonObject.has(fileExtension) && !jsonObject.get(fileExtension).getAsBoolean()) {
-                    // System.out.println("Dokument mit Endung " + fileExtension + " wird nicht hinzugefügt: " + document.getName());
+                    System.out.println("Dokument mit Endung " + fileExtension + " wird nicht hinzugefügt: " + document.getName());
                     continue;
                 }
                 filteredDocuments.add(document);
@@ -954,6 +954,13 @@ public class LoadCases {
 
         File file = new File(caseDir, fileName);
         
+        // Herunterladen nur, wenn Dateiendung 
+        String fileExtension = getFileExtension(fileName);
+        if (jsonObject != null && jsonObject.has(fileExtension) && !jsonObject.get(fileExtension).getAsBoolean()) {
+            System.out.println("Datei mit Endung " + fileExtension + " wird nicht heruntergeladen: " + fileName);
+            return; // Datei nicht herunterladen, wenn die Einstellung auf false ist
+        }
+
         // Überprüfen, ob die Datei bereits existiert
         if ((file.exists()) && loadFile) {
             return; // Wenn die Datei existiert, abbrechen
