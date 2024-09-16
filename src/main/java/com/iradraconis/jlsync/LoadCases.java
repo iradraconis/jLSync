@@ -699,7 +699,8 @@ import javax.swing.JOptionPane;
 public class LoadCases {
 
 
-    static String directoryPath = ".jL_Sync_Files_data";
+    static String userHome = System.getProperty("user.home");
+    static String directoryPath = userHome + "/.jL_Sync_Files_data";;
     static String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
     static Path dirPath = Paths.get(directoryPath);
     static Path settingsPath = Paths.get(filePath);
@@ -800,7 +801,6 @@ public class LoadCases {
     }
 
     private static void saveLastUpdateOfCases(String latestUpdateToCases) {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -912,7 +912,6 @@ public class LoadCases {
     }
 
     public static void dateiEmpfangen(String caseId, String documentId, String fileName, String aktenzeichen, String akteName, String server, String port, String user, String password) {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path settingsPath = Paths.get(filePath);

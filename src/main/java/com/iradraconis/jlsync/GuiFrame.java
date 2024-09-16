@@ -696,11 +696,15 @@ import javax.swing.SwingUtilities;
 
 public class GuiFrame extends javax.swing.JFrame {
 
-    private String syncFolder = System.getProperty("user.home") + "/jLSync/Akten";
+    static String syncFolder = System.getProperty("user.home") + "/jLSync/Akten";
+    static String userHome = System.getProperty("user.home");
+    static String directoryPath = userHome + "/.jL_Sync_Files_data";
     public String principalId;
     public String server;
     public String password;
     public String port;
+    
+    
 
     private final Object fileLock = new Object(); // Lock-Objekt für die Synchronisierung
     
@@ -1004,7 +1008,7 @@ public class GuiFrame extends javax.swing.JFrame {
     
 
     private void loadSettingsInGui() {
-        String directoryPath = ".jL_Sync_Files_data";
+//        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -1085,7 +1089,7 @@ public class GuiFrame extends javax.swing.JFrame {
     }
 
     private void saveSettingsInGui() {
-        String directoryPath = ".jL_Sync_Files_data";
+        
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -1142,7 +1146,6 @@ public class GuiFrame extends javax.swing.JFrame {
     }
     
     private void saveFileTypeSettings() {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -1203,7 +1206,6 @@ public class GuiFrame extends javax.swing.JFrame {
     
     
     private void loadFileTypeSettings() {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path jsonFilePath = Paths.get(filePath);
     
@@ -1248,13 +1250,13 @@ public class GuiFrame extends javax.swing.JFrame {
         }
     }
         
-    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {      
+    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {         
         new Thread(() -> {
             
             password = new String(tfPassword.getPassword());
             
             // prüfe ob jL_Sync_Files_Cases.json existiert
-            Path jsonFilePath = Paths.get(".jL_Sync_Files_data/jL_Sync_Files_Cases.json");
+            Path jsonFilePath = Paths.get(directoryPath + "/jL_Sync_Files_Cases.json");
             if (!Files.exists(jsonFilePath)) {
                 final String status = "Fehler: Aktenbestand nicht vorhanden. Bitte zuerst Aktenbestand abgleichen!";
                 SwingUtilities.invokeLater(() -> lbStatus.setText(status));
@@ -1413,7 +1415,6 @@ public class GuiFrame extends javax.swing.JFrame {
     }
 
     private void saveDocumentDetails(String documentId, String documentName, int documentVersion) {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/files_local.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -1489,7 +1490,6 @@ public class GuiFrame extends javax.swing.JFrame {
     // Prüfen, ob ein Dokument geladen werden soll anhand der documentId und der neuen Version
     // Rückgabe: true, wenn das Dokument geladen werden soll, andernfalls false
     private boolean shouldLoadDocument(String documentId, int remoteVersion) {
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/files_local.json";
         Path jsonFilePath = Paths.get(filePath);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -1540,8 +1540,7 @@ public class GuiFrame extends javax.swing.JFrame {
         }
     }
 
-    private void jMenuItemChooseSyncFolderActionPerformed(java.awt.event.ActionEvent evt) {                                                          
-        String directoryPath = ".jL_Sync_Files_data";
+    private void jMenuItemChooseSyncFolderActionPerformed(java.awt.event.ActionEvent evt) {
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path jsonFilePath = Paths.get(filePath);
@@ -1644,7 +1643,6 @@ public class GuiFrame extends javax.swing.JFrame {
 
     private void jMenuItemShowSettingsActionPerformed(java.awt.event.ActionEvent evt) {                                                      
         // show joptionpane the settings file
-        String directoryPath = ".jL_Sync_Files_data";
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path jsonFilePath = Paths.get(filePath);
     

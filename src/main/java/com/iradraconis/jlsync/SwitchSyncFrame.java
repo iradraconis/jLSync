@@ -31,8 +31,8 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
 
     
     
-
-    static String directoryPath = ".jL_Sync_Files_data";
+    static String userHome = System.getProperty("user.home");
+    static String directoryPath = userHome + "/.jL_Sync_Files_data";;
     static String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
     static Path dirPath = Paths.get(directoryPath);
     static Path settingsPath = Paths.get(filePath);
