@@ -1250,7 +1250,7 @@ public class GuiFrame extends javax.swing.JFrame {
         }
     }
         
-    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {         
+    private void startSyncButtonActionPerformed(java.awt.event.ActionEvent evt) {        
         new Thread(() -> {
             
             password = new String(tfPassword.getPassword());
@@ -1354,18 +1354,22 @@ public class GuiFrame extends javax.swing.JFrame {
                         String documentId = document.getId();
                         String documentName = document.getName();
                         int documentVersion = document.getVersion();
-
-                                              
-                        if (shouldLoadDocument(documentId, documentVersion)) {
-                            
-                            LoadCases.dateiEmpfangen(caseId, documentId, documentName, aktenzeichen, akteName, server, port, principalId, password);
+                        
+                        Boolean loadFile = true;
+                        
+                        if (isVersionHigher(documentId, documentVersion)) {
+                            loadFile = false; // so file should be updated
+                            LoadCases.dateiEmpfangen(caseId, documentId, documentName, loadFile, aktenzeichen, akteName, server, port, principalId, password);
                             // Speichere Dokumentinformationen in der lokalen Datei
                             saveDocumentDetails(documentId, documentName, documentVersion);
                         } else {
                             System.out.println("Dokument " + documentId + " wird nicht geladen, da die neue Version nicht größer ist.");
                         }
 
-
+                        LoadCases.dateiEmpfangen(caseId, documentId, documentName, loadFile, aktenzeichen, akteName, server, port, principalId, password);
+//                        if (isVersionHigher(documentId, documentVersion)) {
+//                            saveDocumentDetails(documentId, documentName, documentVersion);
+//                        }
 
                         // Aktualisieren des Dokumentenfortschritts
                         documentsProcessed++;
@@ -1489,7 +1493,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
     // Prüfen, ob ein Dokument geladen werden soll anhand der documentId und der neuen Version
     // Rückgabe: true, wenn das Dokument geladen werden soll, andernfalls false
-    private boolean shouldLoadDocument(String documentId, int remoteVersion) {
+    private boolean isVersionHigher(String documentId, int remoteVersion) {
         String filePath = directoryPath + "/files_local.json";
         Path jsonFilePath = Paths.get(filePath);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

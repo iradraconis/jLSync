@@ -911,7 +911,7 @@ public class LoadCases {
         }
     }
 
-    public static void dateiEmpfangen(String caseId, String documentId, String fileName, String aktenzeichen, String akteName, String server, String port, String user, String password) {
+    public static void dateiEmpfangen(String caseId, String documentId, String fileName, Boolean loadFile, String aktenzeichen, String akteName, String server, String port, String user, String password) {
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
         Path dirPath = Paths.get(directoryPath);
         Path settingsPath = Paths.get(filePath);
@@ -953,7 +953,11 @@ public class LoadCases {
         //fileName = fileName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_").replace("/", "-");
 
         File file = new File(caseDir, fileName);
-
+        
+        // Überprüfen, ob die Datei bereits existiert
+        if ((file.exists()) && loadFile) {
+            return; // Wenn die Datei existiert, abbrechen
+        }
         
         String url = String.format("%s:%s/j-lawyer-io/rest/v1/cases/document/%s/content",
                 server, port, documentId);
