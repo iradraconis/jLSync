@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.iradraconis</groupId>
     <artifactId>jLSync</artifactId>
-    <version>0.1</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     
     <dependencies>
@@ -15,25 +15,16 @@
             <type>jar</type>
         </dependency>
         
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>3.5</version>
-            <type>jar</type>
-        </dependency>
+       
     
-    <dependency>
-        <groupId>com.formdev</groupId>
-        <artifactId>flatlaf-intellij-themes</artifactId>
-        <version>3.5</version>
-    </dependency>
+    
         
     </dependencies>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>com.iradraconis.jlsync.JLSync</exec.mainClass>
     </properties>
  <build>
@@ -43,6 +34,8 @@
            </resource>
        </resources>
         <plugins>
+           
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -75,6 +68,35 @@
                     </execution>
                 </executions>
             </plugin>
+
+        
+<!--        <plugin>
+            <groupId>io.github.fvarrui</groupId>
+            <artifactId>javapackager</artifactId>
+            <version>1.7.6</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>package</goal>
+                    </goals>
+                    <configuration>
+                         mandatory 
+                        <mainClass>com.iradraconis.jlsync.JLSync</mainClass>
+                         optional 
+                        <bundleJre>true</bundleJre>
+                        <generateInstaller>true</generateInstaller>
+                        <administratorRequired>false</administratorRequired>
+                        <platform>auto</platform>
+                        <additionalResources>
+                            <additionalResource>src/main/resources/com/iradraconis/jlsync/resources</additionalResource>
+                        </additionalResources>
+                        
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>-->
+            
         </plugins>
     </build>
     <name>j-Lawyer Sync</name>
