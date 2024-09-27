@@ -665,11 +665,12 @@
 package com.iradraconis.jlsync;
 
 
+import com.formdev.flatlaf.intellijthemes.FlatMonocaiIJTheme;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+//import javax.swing.UIManager;
 
 /**
  *
@@ -680,8 +681,8 @@ public class JLSync {
     public static void main(String[] args) {
         try {
             // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-intellij-themes#how-to-use
-            // FlatMonocaiIJTheme.setup();
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            FlatMonocaiIJTheme.setup();
+            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
         }
