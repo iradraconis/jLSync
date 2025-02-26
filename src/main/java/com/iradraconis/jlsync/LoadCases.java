@@ -702,8 +702,8 @@ public class LoadCases {
     static String userHome = System.getProperty("user.home");
     static String directoryPath = userHome + "/.jL_Sync_Files_data";;
     static String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
-    static Path dirPath = Paths.get(directoryPath);
-    static Path settingsPath = Paths.get(filePath);
+    //static Path dirPath = Paths.get(directoryPath);
+    //static Path settingsPath = Paths.get(filePath);
 
 
     public static class Document {
@@ -913,7 +913,7 @@ public class LoadCases {
 
     public static void dateiEmpfangen(String caseId, String documentId, String fileName, Boolean loadFile, String aktenzeichen, String akteName, String server, String port, String user, String password) {
         String filePath = directoryPath + "/jL_Sync_Files_Settings.json";
-        Path dirPath = Paths.get(directoryPath);
+        // Path dirPath = Paths.get(directoryPath);
         Path settingsPath = Paths.get(filePath);
         String syncFolder = "./Akten";
 
@@ -941,7 +941,7 @@ public class LoadCases {
                            .replace("Ü", "Ue")
                            .replace("ß", "ss");
         akteName = akteName.replaceAll("[^a-zA-Z0-9_\\-\\.]", "-");
-        String folderName = aktenzeichen + "_" + akteName;
+        String folderName = akteName + "_" + aktenzeichen;
         folderName = folderName.replaceAll("--", "-");
 
         File caseDir = new File(syncFolder + "/" + folderName);

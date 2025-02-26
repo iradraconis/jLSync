@@ -935,7 +935,12 @@ public class GuiFrame extends javax.swing.JFrame {
 
         jMenu4.setText("Über");
 
-        jMenuItem1.setText("V. 0.8 - 16.09.2024");
+        jMenuItem1.setText("V. 1.0 - 26.02.2025");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem1);
 
         jMenuItem2.setText("zur GitHub Seite");
@@ -1696,6 +1701,10 @@ public class GuiFrame extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItemBeendenActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // close the application

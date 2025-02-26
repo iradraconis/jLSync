@@ -697,6 +697,8 @@ public class JLSync {
         syncGui.setVisible(true);
         
         setFrameIcon(syncGui, "/com/iradraconis/jlsync/resources/icon.png"); 
+        
+        Updater.checkForUpdates();
     }
     
     private static void setFrameIcon(JFrame frame, String iconPath) {
