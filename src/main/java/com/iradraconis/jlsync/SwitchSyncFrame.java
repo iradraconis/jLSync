@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,6 +43,8 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
     private final String port;
     private final String user;
     private final String password;
+    
+    private CaseSearchPanel caseSearchPanel;
 
     /**
      * Creates new form SwitchSync
@@ -53,6 +56,9 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
         this.password = password;
 
         initComponents();
+        initializeSearchPanel();
+        setSize(450, 450);
+        setMinimumSize(new Dimension(420, 350));
         setLocationRelativeTo(null);
     }
 
@@ -122,9 +128,29 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
         }
     }
     
+    private void initializeSearchPanel() {
+        caseSearchPanel = new CaseSearchPanel();
+        caseSearchPanel.setSearchSelectionListener(new CaseSearchPanel.SearchSelectionListener() {
+            @Override
+            public void onCaseSelected(FuzzySearchUtil.CaseResult selectedCase) {
+                caseId = selectedCase.getId();
+                updateSyncStatus(selectedCase.getName());
+            }
+        });
+        
+        jTextFieldFileNumber.setVisible(false);
+        
+        javax.swing.GroupLayout layout = (javax.swing.GroupLayout) getContentPane().getLayout();
+        layout.replace(jTextFieldFileNumber, caseSearchPanel);
+        
+        revalidate();
+        repaint();
+    }
     
-    
-    
+    private void updateSyncStatus(String caseName) {
+        jLabelSyncStatusL1.setText(caseName);
+        jLabelSyncStatusL2.setText("Bereit für Synchronisation");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -153,14 +179,16 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
         jTextFieldFileNumber.setText("Aktenzeichen eingeben...");
         jTextFieldFileNumber.setToolTipText("Aktenzeichen eingeben");
 
-        jButtonSyncOff.setText("off");
+        jButtonSyncOff.setText("Sync OFF");
+        jButtonSyncOff.setFont(new java.awt.Font("Cantarell", 1, 12));
         jButtonSyncOff.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSyncOffActionPerformed(evt);
             }
         });
 
-        jButtonSyncOn.setText("on");
+        jButtonSyncOn.setText("Sync ON");
+        jButtonSyncOn.setFont(new java.awt.Font("Cantarell", 1, 12));
         jButtonSyncOn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSyncOnActionPerformed(evt);
@@ -168,59 +196,82 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
         });
 
         jLabelSyncStatusL2.setText(" ");
+        jLabelSyncStatusL2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelSyncStatusL2.setFont(new java.awt.Font("Cantarell", 0, 12));
 
         jLabelSyncStatusL1.setText(" ");
+        jLabelSyncStatusL1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelSyncStatusL1.setFont(new java.awt.Font("Cantarell", 1, 13));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextFieldFileNumber)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButtonSyncOn)
+                        .addComponent(jButtonSyncOn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonSyncOff))
+                        .addComponent(jButtonSyncOff, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabelSyncStatusL2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelSyncStatusL1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
-                .addGap(24, 24, 24))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
+                .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jTextFieldFileNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(25, 25, 25)
+                .addComponent(jTextFieldFileNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonSyncOff)
-                    .addComponent(jButtonSyncOn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jButtonSyncOff, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonSyncOn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
                 .addComponent(jLabelSyncStatusL1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(8, 8, 8)
                 .addComponent(jLabelSyncStatusL2)
-                .addGap(30, 30, 30))
+                .addGap(25, 25, Short.MAX_VALUE))
         );
 
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSyncOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSyncOffActionPerformed
         try {
             String[] caseIdAndName;
+            String searchText = caseSearchPanel.getSearchText();
 
-            caseIdAndName = findCaseIdByFileNumber(jTextFieldFileNumber.getText());
-            System.out.println("caseId: " + caseIdAndName[1]);
-            System.out.println("caseName: " + caseIdAndName[0]);
+            if (searchText.isEmpty()) {
+                jLabelSyncStatusL1.setText("Fehler");
+                jLabelSyncStatusL2.setText("Bitte Akte auswählen");
+                return;
+            }
+
+            if (caseId == null) {
+                caseIdAndName = findCaseIdByFileNumber(searchText);
+                if (caseIdAndName == null) {
+                    jLabelSyncStatusL1.setText("Fehler");
+                    jLabelSyncStatusL2.setText("Akte nicht gefunden");
+                    return;
+                }
+                caseId = caseIdAndName[1];
+            } else {
+                caseIdAndName = findCaseIdByFileNumber(searchText);
+                if (caseIdAndName == null) {
+                    jLabelSyncStatusL1.setText("Fehler");
+                    jLabelSyncStatusL2.setText("Akte nicht gefunden");
+                    return;
+                }
+            }
             
-            caseId = caseIdAndName[1];
-            String caseName = caseIdAndName[0];
+            System.out.println("caseId: " + caseId);
+            System.out.println("caseName: " + caseIdAndName[0]);
 
-            switchSync(caseId, caseName, server, port, user, password, "off");
+            switchSync(caseId, caseIdAndName[0], server, port, user, password, "off");
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SwitchSyncFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -230,15 +281,35 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
     private void jButtonSyncOnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSyncOnActionPerformed
         try {
             String[] caseIdAndName;
+            String searchText = caseSearchPanel.getSearchText();
 
-            caseIdAndName = findCaseIdByFileNumber(jTextFieldFileNumber.getText());
-            System.out.println("caseId: " + caseIdAndName[1]);
+            if (searchText.isEmpty()) {
+                jLabelSyncStatusL1.setText("Fehler");
+                jLabelSyncStatusL2.setText("Bitte Akte auswählen");
+                return;
+            }
+
+            if (caseId == null) {
+                caseIdAndName = findCaseIdByFileNumber(searchText);
+                if (caseIdAndName == null) {
+                    jLabelSyncStatusL1.setText("Fehler");
+                    jLabelSyncStatusL2.setText("Akte nicht gefunden");
+                    return;
+                }
+                caseId = caseIdAndName[1];
+            } else {
+                caseIdAndName = findCaseIdByFileNumber(searchText);
+                if (caseIdAndName == null) {
+                    jLabelSyncStatusL1.setText("Fehler");
+                    jLabelSyncStatusL2.setText("Akte nicht gefunden");
+                    return;
+                }
+            }
+            
+            System.out.println("caseId: " + caseId);
             System.out.println("caseName: " + caseIdAndName[0]);
 
-            caseId = caseIdAndName[1];
-            String caseName = caseIdAndName[0];
-
-            switchSync(caseId, caseName, server, port, user, password, "on");
+            switchSync(caseId, caseIdAndName[0], server, port, user, password, "on");
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SwitchSyncFrame.class.getName()).log(Level.SEVERE, null, ex);

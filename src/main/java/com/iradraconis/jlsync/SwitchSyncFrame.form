@@ -37,7 +37,7 @@
                   <Component id="jLabelSyncStatusL1" max="32767" attributes="0"/>
                   <Component id="jLabel1" pref="193" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+              <EmptySpace pref="28" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -98,11 +98,13 @@
     <Component class="javax.swing.JLabel" name="jLabelSyncStatusL2">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
+        <Property name="horizontalTextPosition" type="int" value="0"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelSyncStatusL1">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
+        <Property name="horizontalTextPosition" type="int" value="0"/>
       </Properties>
     </Component>
   </SubComponents>
