@@ -683,7 +683,7 @@ import javax.swing.JOptionPane;
 
 public class Updater {
     // Aktuelle Version der Anwendung – passe diesen Wert an
-    private static final String CURRENT_VERSION = "v1.0";
+    private static final String CURRENT_VERSION = "v1.1";
     // GitHub API URL für alle Releases
     private static final String GITHUB_RELEASES_API = "https://api.github.com/repos/iradraconis/jLSync/releases";
 
