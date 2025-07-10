@@ -149,7 +149,7 @@ public class SwitchSyncFrame extends javax.swing.JFrame {
     
     private void updateSyncStatus(String caseName) {
         jLabelSyncStatusL1.setText(caseName);
-        jLabelSyncStatusL2.setText("Bereit für Synchronisation");
+        jLabelSyncStatusL2.setText("ausgewählt");
     }
 
     /**

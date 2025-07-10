@@ -935,7 +935,7 @@ public class GuiFrame extends javax.swing.JFrame {
 
         jMenu4.setText("Über");
 
-        jMenuItem1.setText("V. 1.1 - 10.07.2025");
+        jMenuItem1.setText("V. 1.2 - 10.07.2025");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
